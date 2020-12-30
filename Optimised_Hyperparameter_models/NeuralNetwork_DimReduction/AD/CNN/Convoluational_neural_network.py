@@ -1,10 +1,9 @@
-#based ont his paper
+#based on this paper
 # https://bmcmedgenomics.biomedcentral.com/articles/10.1186/s12920-020-0677-2
 #https://github.com/chenlabgccri/CancerTypePrediction/blob/master/5cv_33class/5cv_1D_CNN_33class.py
 
 ###set seed for keras work
 # Seed value
-# Apparently you may use different seed values at each stage
 seed_value= 0
 # 1. Set `PYTHONHASHSEED` environment variable at a fixed value
 import os
@@ -131,6 +130,10 @@ input_shape1 = (img_rows, img_cols, 1)
 input_Xs1 = input_Xs1.astype('float32')
 
 
+##################
+#   Define model to test various parameters with
+##################
+
 def make_model(dense_layer_sizes, filters, kernel_size):
     model = Sequential()
     ## *********** First layer Conv
@@ -148,6 +151,9 @@ def make_model(dense_layer_sizes, filters, kernel_size):
     return model
 
 
+####################
+#   Run gridsearch to identify best parameters
+####################
 dense_size_candidates = [2, 8, 32, 64, 128]
 my_classifier = KerasClassifier(make_model, batch_size=32)
 validator = GridSearchCV(my_classifier,
