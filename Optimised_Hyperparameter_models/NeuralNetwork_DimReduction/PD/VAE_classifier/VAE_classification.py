@@ -132,7 +132,7 @@ print('------------------------------------------------------------------------'
 
 model.summary()
 
-##all model evaluation is shown in VAE_models_results.py
+##all model evaluation is shown in VAE_models_results.txt
 
 #################
 #Best model
