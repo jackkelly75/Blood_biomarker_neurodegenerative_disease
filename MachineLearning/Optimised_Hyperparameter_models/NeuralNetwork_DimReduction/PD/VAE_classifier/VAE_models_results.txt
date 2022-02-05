@@ -1,0 +1,530 @@
+###Models
+#1 - Normal
+#2 - Batch normalisation
+#3 - Dropout
+#4 - Dropout + MaxNorm
+#5
+#6
+
+
+
+#########
+#	1	#
+#########
+##########
+# Normal
+##########
+model = Sequential()
+model.add(Dense(4096, activation = 'relu', input_dim=20183))
+model.add(Dense(1024, activation='relu'))
+model.add(Dense(512, activation='relu'))
+model.add(Dense(128))
+model.add(Dense(128, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(2, activation='softmax'))
+# Compile the model
+opt = keras.optimizers.Adam(learning_rate=0.001)
+model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy', metrics.AUC(name='AUC', curve ='ROC'),metrics.AUC(name='PR', curve ='PR')])
+	callbacks = [EarlyStopping(monitor='PR', patience=50), ModelCheckpoint(filepath='best_model.h5', monitor='PR', save_best_only=True)]
+	print('------------------------------------------------------------------------')
+	print(f'Training for fold {fold_var} ...')
+	history = model.fit(training_data, training_y, epochs=100, callbacks = callbacks, batch_size = 32, validation_data = (validation_data, validation_y))
+
+------------------------------------------------------------------------
+Score per fold
+------------------------------------------------------------------------
+> Fold 1 - Loss: 2.900175094604492 - Accuracy: 0.5737704634666443%
+------------------------------------------------------------------------
+> Fold 2 - Loss: 3.4632785320281982 - Accuracy: 0.5409836173057556%
+------------------------------------------------------------------------
+> Fold 3 - Loss: 3.446106433868408 - Accuracy: 0.5737704634666443%
+------------------------------------------------------------------------
+> Fold 4 - Loss: 3.5956552028656006 - Accuracy: 0.5166666507720947%
+------------------------------------------------------------------------
+> Fold 5 - Loss: 3.608745813369751 - Accuracy: 0.5333333611488342%
+------------------------------------------------------------------------
+Average scores for all folds:
+> Accuracy: 0.5477049112319946 (+- 0.022688838149216763)
+> Loss: 3.40279221534729
+------------------------------------------------------------------------
+Model: "sequential_69"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_483 (Dense)            (None, 4096)              82673664  
+_________________________________________________________________
+dense_484 (Dense)            (None, 1024)              4195328   
+_________________________________________________________________
+dense_485 (Dense)            (None, 512)               524800    
+_________________________________________________________________
+dense_486 (Dense)            (None, 128)               65664     
+_________________________________________________________________
+dense_487 (Dense)            (None, 128)               16512     
+_________________________________________________________________
+dense_488 (Dense)            (None, 64)                8256      
+_________________________________________________________________
+dense_489 (Dense)            (None, 2)                 130       
+=================================================================
+Total params: 87,484,354
+Trainable params: 87,484,354
+Non-trainable params: 0
+_________________________________________________________________
+
+
+#########
+#	2	#
+#########
+#######################
+# batch normalisation
+#######################
+
+	model = Sequential()
+	model.add(Dense(4096, activation = 'relu', input_dim=20183))
+	model.add(BatchNormalization())
+	model.add(Dense(1024, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dense(512, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dense(128))
+	model.add(BatchNormalization())
+	model.add(Dense(128, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dense(64, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dense(2, activation='softmax'))
+	# Compile the model
+	opt = keras.optimizers.Adam(learning_rate=0.001)
+	model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy', metrics.AUC(name='AUC', curve ='ROC'),metrics.AUC(name='PR', curve ='PR')])
+	callbacks = [EarlyStopping(monitor='PR', patience=50), ModelCheckpoint(filepath='best_model.h5', monitor='PR', save_best_only=True)]
+	print('------------------------------------------------------------------------')
+	print(f'Training for fold {fold_var} ...')
+	history = model.fit(training_data, training_y, epochs=100, callbacks = callbacks, batch_size = 32, validation_data = (validation_data, validation_y))
+
+------------------------------------------------------------------------
+Score per fold
+------------------------------------------------------------------------
+> Fold 1 - Loss: 2.1060235500335693 - Accuracy: 0.5901639461517334%
+------------------------------------------------------------------------
+> Fold 2 - Loss: 2.0349061489105225 - Accuracy: 0.5901639461517334%
+------------------------------------------------------------------------
+> Fold 3 - Loss: 2.0414299964904785 - Accuracy: 0.5573770403862%
+------------------------------------------------------------------------
+> Fold 4 - Loss: 2.522813081741333 - Accuracy: 0.46666666865348816%
+------------------------------------------------------------------------
+> Fold 5 - Loss: 2.2691071033477783 - Accuracy: 0.5333333611488342%
+------------------------------------------------------------------------
+Average scores for all folds:
+> Accuracy: 0.5475409924983978 (+- 0.045766129922151705)
+> Loss: 2.194855976104736
+------------------------------------------------------------------------
+Model: "sequential_74"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_518 (Dense)            (None, 4096)              82673664  
+_________________________________________________________________
+batch_normalization_114 (Bat (None, 4096)              16384     
+_________________________________________________________________
+dense_519 (Dense)            (None, 1024)              4195328   
+_________________________________________________________________
+batch_normalization_115 (Bat (None, 1024)              4096      
+_________________________________________________________________
+dense_520 (Dense)            (None, 512)               524800    
+_________________________________________________________________
+batch_normalization_116 (Bat (None, 512)               2048      
+_________________________________________________________________
+dense_521 (Dense)            (None, 128)               65664     
+_________________________________________________________________
+batch_normalization_117 (Bat (None, 128)               512       
+_________________________________________________________________
+dense_522 (Dense)            (None, 128)               16512     
+_________________________________________________________________
+batch_normalization_118 (Bat (None, 128)               512       
+_________________________________________________________________
+dense_523 (Dense)            (None, 64)                8256      
+_________________________________________________________________
+batch_normalization_119 (Bat (None, 64)                256       
+_________________________________________________________________
+dense_524 (Dense)            (None, 2)                 130       
+=================================================================
+Total params: 87,508,162
+Trainable params: 87,496,258
+Non-trainable params: 11,904
+_________________________________________________________________
+
+
+
+#########
+#	3	#
+#########
+#####################
+# dropout
+#####################
+https://machinelearningmastery.com/dropout-regularization-deep-learning-models-keras/
+
+
+	model = Sequential()
+	model.add(Dense(4096, activation = 'relu', input_dim=20183))
+	model.add(BatchNormalization())
+	model.add(Dense(1024, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dropout(0.2))
+	model.add(Dense(512, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dropout(0.2))
+	model.add(Dense(128))
+	model.add(BatchNormalization())
+	model.add(Dense(128, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dense(64, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dropout(0.2))
+	model.add(Dense(2, activation='softmax'))
+	# Compile the model
+	opt = keras.optimizers.Adam(learning_rate=0.001)
+	model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy', metrics.AUC(name='AUC', curve ='ROC'),metrics.AUC(name='PR', curve ='PR')])
+	callbacks = [EarlyStopping(monitor='PR', patience=50), ModelCheckpoint(filepath='best_model.h5', monitor='PR', save_best_only=True)]
+	print('------------------------------------------------------------------------')
+	print(f'Training for fold {fold_var} ...')
+	history = model.fit(training_data, training_y, epochs=100, callbacks = callbacks, batch_size = 32, validation_data = (validation_data, validation_y))
+
+------------------------------------------------------------------------
+Score per fold
+------------------------------------------------------------------------
+> Fold 1 - Loss: 1.7027435302734375 - Accuracy: 0.5409836173057556%
+------------------------------------------------------------------------
+> Fold 2 - Loss: 2.034405469894409 - Accuracy: 0.5901639461517334%
+------------------------------------------------------------------------
+> Fold 3 - Loss: 2.1543819904327393 - Accuracy: 0.5245901346206665%
+------------------------------------------------------------------------
+> Fold 4 - Loss: 2.1472041606903076 - Accuracy: 0.5%
+------------------------------------------------------------------------
+> Fold 5 - Loss: 1.501067876815796 - Accuracy: 0.6166666746139526%
+------------------------------------------------------------------------
+Average scores for all folds:
+> Accuracy: 0.5544808745384217 (+- 0.04285826246338393)
+> Loss: 1.9079606056213378
+------------------------------------------------------------------------
+Model: "sequential_79"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_553 (Dense)            (None, 4096)              82673664  
+_________________________________________________________________
+batch_normalization_144 (Bat (None, 4096)              16384     
+_________________________________________________________________
+dense_554 (Dense)            (None, 1024)              4195328   
+_________________________________________________________________
+batch_normalization_145 (Bat (None, 1024)              4096      
+_________________________________________________________________
+dropout_12 (Dropout)         (None, 1024)              0         
+_________________________________________________________________
+dense_555 (Dense)            (None, 512)               524800    
+_________________________________________________________________
+batch_normalization_146 (Bat (None, 512)               2048      
+_________________________________________________________________
+dropout_13 (Dropout)         (None, 512)               0         
+_________________________________________________________________
+dense_556 (Dense)            (None, 128)               65664     
+_________________________________________________________________
+batch_normalization_147 (Bat (None, 128)               512       
+_________________________________________________________________
+dense_557 (Dense)            (None, 128)               16512     
+_________________________________________________________________
+batch_normalization_148 (Bat (None, 128)               512       
+_________________________________________________________________
+dense_558 (Dense)            (None, 64)                8256      
+_________________________________________________________________
+batch_normalization_149 (Bat (None, 64)                256       
+_________________________________________________________________
+dropout_14 (Dropout)         (None, 64)                0         
+_________________________________________________________________
+dense_559 (Dense)            (None, 2)                 130       
+=================================================================
+Total params: 87,508,162
+Trainable params: 87,496,258
+Non-trainable params: 11,904
+_________________________________________________________________
+
+#########
+#	4	#
+#########
+#####################
+# dropout + maxnorm
+#####################
+https://machinelearningmastery.com/dropout-regularization-deep-learning-models-keras/
+
+	model = Sequential()
+	model.add(Dense(4096, activation = 'relu', input_dim=20183, kernel_constraint=maxnorm(3)))
+	model.add(BatchNormalization())
+	model.add(Dense(1024, activation='relu', kernel_constraint=maxnorm(3)))
+	model.add(BatchNormalization())
+	model.add(Dropout(0.2))
+	model.add(Dense(512, activation='relu' ,kernel_constraint=maxnorm(3)))
+	model.add(BatchNormalization())
+	model.add(Dropout(0.2))
+	model.add(Dense(128, kernel_constraint=maxnorm(3)))
+	model.add(BatchNormalization())
+	model.add(Dense(128, activation='relu', kernel_constraint=maxnorm(3)))
+	model.add(BatchNormalization())
+	model.add(Dense(64, activation='relu', kernel_constraint=maxnorm(3)))
+	model.add(BatchNormalization())
+	model.add(Dropout(0.2))
+	model.add(Dense(2, activation='softmax'))
+	# Compile the model
+	opt = keras.optimizers.Adam(learning_rate=0.001)
+	model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy', metrics.AUC(name='AUC', curve ='ROC'),metrics.AUC(name='PR', curve ='PR')])
+
+	callbacks = [EarlyStopping(monitor='PR', patience=50), ModelCheckpoint(filepath='best_model.h5', monitor='PR', save_best_only=True)]
+	print('------------------------------------------------------------------------')
+	print(f'Training for fold {fold_var} ...')
+	history = model.fit(training_data, training_y, epochs=100, callbacks = callbacks, batch_size = 32, validation_data = (validation_data, validation_y))
+
+
+------------------------------------------------------------------------
+Score per fold
+------------------------------------------------------------------------
+> Fold 1 - Loss: 2.2690889835357666 - Accuracy: 0.5245901346206665%
+------------------------------------------------------------------------
+> Fold 2 - Loss: 2.1665515899658203 - Accuracy: 0.5245901346206665%
+------------------------------------------------------------------------
+> Fold 3 - Loss: 2.1660211086273193 - Accuracy: 0.5573770403862%
+------------------------------------------------------------------------
+> Fold 4 - Loss: 2.156205177307129 - Accuracy: 0.4833333194255829%
+------------------------------------------------------------------------
+> Fold 5 - Loss: 1.7476543188095093 - Accuracy: 0.5333333611488342%
+------------------------------------------------------------------------
+Average scores for all folds:
+> Accuracy: 0.52464479804039 (+- 0.02388947491844402)
+> Loss: 2.101104235649109
+------------------------------------------------------------------------
+Model: "sequential_84"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_588 (Dense)            (None, 4096)              82673664  
+_________________________________________________________________
+batch_normalization_174 (Bat (None, 4096)              16384     
+_________________________________________________________________
+dense_589 (Dense)            (None, 1024)              4195328   
+_________________________________________________________________
+batch_normalization_175 (Bat (None, 1024)              4096      
+_________________________________________________________________
+dropout_27 (Dropout)         (None, 1024)              0         
+_________________________________________________________________
+dense_590 (Dense)            (None, 512)               524800    
+_________________________________________________________________
+batch_normalization_176 (Bat (None, 512)               2048      
+_________________________________________________________________
+dropout_28 (Dropout)         (None, 512)               0         
+_________________________________________________________________
+dense_591 (Dense)            (None, 128)               65664     
+_________________________________________________________________
+batch_normalization_177 (Bat (None, 128)               512       
+_________________________________________________________________
+dense_592 (Dense)            (None, 128)               16512     
+_________________________________________________________________
+batch_normalization_178 (Bat (None, 128)               512       
+_________________________________________________________________
+dense_593 (Dense)            (None, 64)                8256      
+_________________________________________________________________
+batch_normalization_179 (Bat (None, 64)                256       
+_________________________________________________________________
+dropout_29 (Dropout)         (None, 64)                0         
+_________________________________________________________________
+dense_594 (Dense)            (None, 2)                 130       
+=================================================================
+Total params: 87,508,162
+Trainable params: 87,496,258
+Non-trainable params: 11,904
+_________________________________________________________________
+
+
+
+
+#########
+#	4	#
+#########
+#####################
+# 0.3dropout 
+#####################
+
+	model = Sequential()
+	model.add(Dense(4096, activation = 'relu', input_dim=20183))
+	model.add(BatchNormalization())
+	model.add(Dense(1024, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dropout(0.3))
+	model.add(Dense(512, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dropout(0.3))
+	model.add(Dense(128))
+	model.add(BatchNormalization())
+	model.add(Dense(128, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dense(64, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dropout(0.3))
+	model.add(Dense(2, activation='softmax'))
+	# Compile the model
+	opt = keras.optimizers.Adam(learning_rate=0.001)
+	model.compile(optimizer=opt, loss='categorical_crossentropy', metrics=['accuracy', metrics.AUC(name='AUC', curve ='ROC'),metrics.AUC(name='PR', curve ='PR')])
+	callbacks = [EarlyStopping(monitor='PR', patience=50), ModelCheckpoint(filepath='best_model.h5', monitor='PR', save_best_only=True)]
+	print('------------------------------------------------------------------------')
+	print(f'Training for fold {fold_var} ...')
+	history = model.fit(training_data, training_y, epochs=1000, callbacks = callbacks, batch_size = 32, validation_data = (validation_data, validation_y))
+
+
+------------------------------------------------------------------------
+Score per fold
+------------------------------------------------------------------------
+> Fold 1 - Loss: 1.92018723487854 - Accuracy: 0.5901639461517334%
+------------------------------------------------------------------------
+> Fold 2 - Loss: 1.9886773824691772 - Accuracy: 0.5737704634666443%
+------------------------------------------------------------------------
+> Fold 3 - Loss: 1.8347585201263428 - Accuracy: 0.5409836173057556%
+------------------------------------------------------------------------
+> Fold 4 - Loss: 1.763843059539795 - Accuracy: 0.5333333611488342%
+------------------------------------------------------------------------
+> Fold 5 - Loss: 2.1203055381774902 - Accuracy: 0.5166666507720947%
+------------------------------------------------------------------------
+Average scores for all folds:
+> Accuracy: 0.5509836077690125 (+- 0.026994533746356332)
+> Loss: 1.925554347038269
+------------------------------------------------------------------------
+Model: "sequential_89"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_623 (Dense)            (None, 4096)              82673664  
+_________________________________________________________________
+batch_normalization_204 (Bat (None, 4096)              16384     
+_________________________________________________________________
+dense_624 (Dense)            (None, 1024)              4195328   
+_________________________________________________________________
+batch_normalization_205 (Bat (None, 1024)              4096      
+_________________________________________________________________
+dropout_42 (Dropout)         (None, 1024)              0         
+_________________________________________________________________
+dense_625 (Dense)            (None, 512)               524800    
+_________________________________________________________________
+batch_normalization_206 (Bat (None, 512)               2048      
+_________________________________________________________________
+dropout_43 (Dropout)         (None, 512)               0         
+_________________________________________________________________
+dense_626 (Dense)            (None, 128)               65664     
+_________________________________________________________________
+batch_normalization_207 (Bat (None, 128)               512       
+_________________________________________________________________
+dense_627 (Dense)            (None, 128)               16512     
+_________________________________________________________________
+batch_normalization_208 (Bat (None, 128)               512       
+_________________________________________________________________
+dense_628 (Dense)            (None, 64)                8256      
+_________________________________________________________________
+batch_normalization_209 (Bat (None, 64)                256       
+_________________________________________________________________
+dropout_44 (Dropout)         (None, 64)                0         
+_________________________________________________________________
+dense_629 (Dense)            (None, 2)                 130       
+=================================================================
+Total params: 87,508,162
+Trainable params: 87,496,258
+Non-trainable params: 11,904
+_________________________________________________________________
+
+
+
+
+#########
+#	5	#
+#########
+#####################
+# dropout + binary
+#####################
+https://machinelearningmastery.com/dropout-regularization-deep-learning-models-keras/
+
+
+	model = Sequential()
+	model.add(Dense(4096, activation = 'relu', input_dim=20183))
+	model.add(BatchNormalization())
+	model.add(Dense(1024, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dropout(0.2))
+	model.add(Dense(512, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dropout(0.2))
+	model.add(Dense(128))
+	model.add(BatchNormalization())
+	model.add(Dense(128, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dense(64, activation='relu'))
+	model.add(BatchNormalization())
+	model.add(Dropout(0.2))
+	model.add(Dense(2, activation='softmax'))
+	# Compile the model
+	opt = keras.optimizers.Adam(learning_rate=0.001)
+	model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy', metrics.AUC(name='AUC', curve ='ROC'),metrics.AUC(name='PR', curve ='PR')])
+	callbacks = [EarlyStopping(monitor='PR', patience=50), ModelCheckpoint(filepath='best_model.h5', monitor='PR', save_best_only=True)]
+	print('------------------------------------------------------------------------')
+	print(f'Training for fold {fold_var} ...')
+	history = model.fit(training_data, training_y, epochs=100, callbacks = callbacks, batch_size = 32, validation_data = (validation_data, validation_y))
+
+------------------------------------------------------------------------
+Score per fold
+------------------------------------------------------------------------
+> Fold 1 - Loss: 2.0011861324310303 - Accuracy: 0.5737704634666443%
+------------------------------------------------------------------------
+> Fold 2 - Loss: 2.165111780166626 - Accuracy: 0.5409836173057556%
+------------------------------------------------------------------------
+> Fold 3 - Loss: 1.9044647216796875 - Accuracy: 0.5737704634666443%
+------------------------------------------------------------------------
+> Fold 4 - Loss: 1.8004839420318604 - Accuracy: 0.550000011920929%
+------------------------------------------------------------------------
+> Fold 5 - Loss: 2.306157350540161 - Accuracy: 0.5333333611488342%
+------------------------------------------------------------------------
+Average scores for all folds:
+> Accuracy: 0.5543715834617615 (+- 0.01669483851079015)
+> Loss: 2.035480785369873
+------------------------------------------------------------------------
+Model: "sequential_94"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_658 (Dense)            (None, 4096)              82673664  
+_________________________________________________________________
+batch_normalization_234 (Bat (None, 4096)              16384     
+_________________________________________________________________
+dense_659 (Dense)            (None, 1024)              4195328   
+_________________________________________________________________
+batch_normalization_235 (Bat (None, 1024)              4096      
+_________________________________________________________________
+dropout_57 (Dropout)         (None, 1024)              0         
+_________________________________________________________________
+dense_660 (Dense)            (None, 512)               524800    
+_________________________________________________________________
+batch_normalization_236 (Bat (None, 512)               2048      
+_________________________________________________________________
+dropout_58 (Dropout)         (None, 512)               0         
+_________________________________________________________________
+dense_661 (Dense)            (None, 128)               65664     
+_________________________________________________________________
+batch_normalization_237 (Bat (None, 128)               512       
+_________________________________________________________________
+dense_662 (Dense)            (None, 128)               16512     
+_________________________________________________________________
+batch_normalization_238 (Bat (None, 128)               512       
+_________________________________________________________________
+dense_663 (Dense)            (None, 64)                8256      
+_________________________________________________________________
+batch_normalization_239 (Bat (None, 64)                256       
+_________________________________________________________________
+dropout_59 (Dropout)         (None, 64)                0         
+_________________________________________________________________
+dense_664 (Dense)            (None, 2)                 130       
+=================================================================
+Total params: 87,508,162
+Trainable params: 87,496,258
+Non-trainable params: 11,904
+_________________________________________________________________
+
