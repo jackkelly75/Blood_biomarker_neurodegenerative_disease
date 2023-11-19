@@ -1,5 +1,11 @@
 # Thesis_FeatureSelection_ML_code
 
+Work in this chapter of thesis is now published at:  
+**Kelly J**, Moyeed R, Carroll C, Luo S & Li X (2023), “Blood biomarker-based classification study for neurodegenerative diseases”. *Scientific reports*, 13:17191 (2023). https://doi.org/10.1038/s41598-023-43956-4
+
+
+
+
 Code for feature selection and classification approaches used in Chapter 6 of thesis.  
 `Optimised_Hyperparameter_models` contains the code run and the results for optimsation and running of feature selection and classification
 <br/><br/>
